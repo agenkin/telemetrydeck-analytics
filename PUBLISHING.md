@@ -155,8 +155,9 @@ done
 
 Before each release, walk through:
 
-- [ ] Bump `version` in `.claude-plugin/plugin.json` **and** `.claude-plugin/marketplace.json` (keep them in sync)
-- [ ] Run `claude plugin validate .`
+- [ ] Bump `version` in `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, **and** `skills/analytics/SKILL.md` (keep them in sync)
+- [ ] `python3 scripts/test_release.py` — offline checks (version sync, JSON schema, SKILL.md frontmatter, Python/Bash syntax, CLI smoke, slash-command refs)
+- [ ] `python3 scripts/test_release.py --with-claude` — end-to-end install via local marketplace (also runs `claude plugin validate .`)
 - [ ] Smoke test: `/telemetrydeck-analytics:doctor` from a fresh install
 - [ ] Smoke test: `tdq test` (runs 3 known-good TQL queries and asserts row counts)
 - [ ] Update the version line at the bottom of `README.md`

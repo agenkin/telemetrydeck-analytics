@@ -1,7 +1,7 @@
 ---
 name: telemetrydeck-analytics
 description: Query a TelemetryDeck app's product analytics to answer questions about DAU/MAU, retention, event counts, funnels, cohorts, and pipeline health. Use whenever the user asks a "how are users actually using this app" question that needs live data from TelemetryDeck, or is diagnosing signal-ingestion issues (missing events, opt-in anomalies, appID filters). Ships a self-contained CLI with OS-native secret storage — no repo-local `.env`, no secrets on disk outside the OS credential store.
-version: 0.6.0
+version: 0.6.1
 ---
 
 # TelemetryDeck Analytics
@@ -49,7 +49,7 @@ Non-secret state (email, registered apps, token expiry) lives in a platform-appr
 
 After setup, every subcommand auto-refreshes the bearer on expiry or HTTP 401.
 
-`$SKILL_DIR` = the absolute directory of this SKILL.md (inside the plugin at `skills/analytics/`). Use it only when you need to read bundled reference files (`tql/index.md`, `reference.md`) — invocations should go through the `tdq` PATH wrapper, not `python3 "$SKILL_DIR/tdq.py"`.
+`$SKILL_DIR` = the absolute directory of this SKILL.md (inside the plugin at `skills/analytics/`). Use it to read bundled reference files (`tql/index.md`, `reference.md`); prefer the `tdq` PATH wrapper for invocations when it is available, otherwise fall back to `python3 "$SKILL_DIR/tdq.py"` as noted above.
 
 Verify setup:
 

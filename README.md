@@ -32,7 +32,7 @@ claude plugin install telemetrydeck-analytics@telemetrydeck-analytics
 
 ### skills.sh
 
-Pulls just the skill files (no slash commands, no `bin/tdq` wrapper — clone the repo too if you want the CLI):
+Pulls the skill files including the bundled `tdq.py` — Claude uses it automatically via the `$SKILL_DIR` fallback. No slash commands and no `tdq` on `PATH`, but all queries work:
 
 ```bash
 npx skills add agenkin/telemetrydeck-analytics

@@ -11,7 +11,7 @@
       "name": "telemetrydeck-analytics",
       "source": "./",
       "description": "Claude Code plugin and skill for working with TelemetryDeck product analytics. Ask questions in plain English, get real queries, real tables, and honest caveats.",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "author": {
         "name": "Anton Genkin"
       },

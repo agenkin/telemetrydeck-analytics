@@ -1,0 +1,33 @@
+{
+  "name": "telemetrydeck-analytics",
+  "owner": {
+    "name": "Anton Genkin"
+  },
+  "metadata": {
+    "description": "Single-plugin marketplace for telemetrydeck-analytics."
+  },
+  "plugins": [
+    {
+      "name": "telemetrydeck-analytics",
+      "source": "./",
+      "description": "Claude Code plugin and skill for working with TelemetryDeck product analytics. Ask questions in plain English, get real queries, real tables, and honest caveats.",
+      "version": "0.6.0",
+      "author": {
+        "name": "Anton Genkin"
+      },
+      "homepage": "https://github.com/agenkin/telemetrydeck-analytics",
+      "repository": "https://github.com/agenkin/telemetrydeck-analytics",
+      "license": "MIT",
+      "keywords": [
+        "telemetrydeck",
+        "analytics",
+        "product-analytics",
+        "dau",
+        "mau",
+        "retention",
+        "funnel"
+      ],
+      "category": "analytics"
+    }
+  ]
+}

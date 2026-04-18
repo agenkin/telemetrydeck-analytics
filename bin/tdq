@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# tdq — TelemetryDeck v3 query CLI (plugin wrapper).
+#
+# While this plugin is enabled, Claude Code adds this directory to the Bash
+# tool's PATH, so `tdq <subcommand>` works from any working directory. The
+# wrapper just hands off to the bundled Python CLI.
+set -euo pipefail
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CLI="$HERE/../skills/analytics/tdq.py"
+
+if [[ ! -f "$CLI" ]]; then
+  echo "tdq: cannot find $CLI" >&2
+  exit 1
+fi
+
+exec python3 "$CLI" "$@"

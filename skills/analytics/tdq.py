@@ -349,7 +349,12 @@ def _mint_token(cfg: dict[str, Any], *, interactive: bool) -> str:
 
     if not email:
         if not interactive:
-            sys.exit("No email on file. Run: tdq.py login")
+            sys.exit("No email on file. Run: tdq login")
+        if not sys.stdin.isatty():
+            sys.exit(
+                "stdin is not a TTY — cannot prompt for email.\n"
+                "Run `tdq login` directly in your terminal."
+            )
         email = input("TelemetryDeck email: ").strip()
         if not email:
             sys.exit("Email required.")
@@ -357,7 +362,12 @@ def _mint_token(cfg: dict[str, Any], *, interactive: bool) -> str:
 
     if not password:
         if not interactive:
-            sys.exit("No password on file. Run: tdq.py login")
+            sys.exit("No password on file. Run: tdq login")
+        if not sys.stdin.isatty():
+            sys.exit(
+                "stdin is not a TTY — cannot prompt for password.\n"
+                "Run `tdq login` directly in your terminal."
+            )
         password = getpass.getpass("TelemetryDeck password: ")
         if not password:
             sys.exit("Password required.")
@@ -431,6 +441,11 @@ def get_app_id(args: argparse.Namespace, *, interactive: bool = False) -> str:
         print("Registered apps:")
         for uuid, name in sorted(apps.items(), key=lambda kv: (kv[1] or "", kv[0])):
             print(f"  {name}  ({uuid})")
+    if not sys.stdin.isatty():
+        sys.exit(
+            "stdin is not a TTY — cannot prompt for app UUID.\n"
+            "Pass --app-id <UUID> or run `tdq apps use <uuid>` in your terminal."
+        )
     app_id = input("TelemetryDeck app UUID to use: ").strip()
     if not app_id:
         sys.exit("App ID required.")
@@ -971,20 +986,36 @@ def cmd_login(args: argparse.Namespace) -> None:
             print("Apps available:")
             for i, app in enumerate(ordered, 1):
                 print(f"  [{i}] {app['name']}  ({app['id']})")
-            pick = input("Pick an app (number, or paste a UUID, or blank to skip): ").strip()
-            if pick:
-                if pick.isdigit() and 1 <= int(pick) <= len(ordered):
-                    chosen = ordered[int(pick) - 1]["id"]
-                else:
-                    chosen = pick
             # Register all discovered apps so `apps` lists them without a second round-trip.
             for app in ordered:
                 register_app(cfg, app["id"], app["name"])
+            if not sys.stdin.isatty():
+                if len(ordered) == 1:
+                    chosen = ordered[0]["id"]
+                    print(f"Non-interactive: auto-selected only app: {ordered[0]['name']}  ({chosen})")
+                else:
+                    uuids = "\n".join(f"  tdq login --app-id {a['id']}   # {a['name']}" for a in ordered)
+                    sys.exit(
+                        f"stdin is not a TTY — cannot prompt for app selection.\n"
+                        f"Re-run with --app-id in your terminal:\n{uuids}"
+                    )
+            else:
+                pick = input("Pick an app (number, or paste a UUID, or blank to skip): ").strip()
+                if pick:
+                    if pick.isdigit() and 1 <= int(pick) <= len(ordered):
+                        chosen = ordered[int(pick) - 1]["id"]
+                    else:
+                        chosen = pick
         else:
+            if not sys.stdin.isatty():
+                sys.exit(
+                    "Could not auto-list apps and stdin is not a TTY.\n"
+                    "Run `tdq login --app-id <UUID>` directly in your terminal."
+                )
             print(
                 "Could not auto-list apps (endpoint not exposed or no access). "
                 "Paste an app UUID below, or press Enter to configure later with "
-                "`tdq.py apps add <uuid>`."
+                "`tdq apps add <uuid>`."
             )
             manual = input("App UUID (optional): ").strip()
             if manual:

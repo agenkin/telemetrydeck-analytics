@@ -5,25 +5,44 @@ disable-model-invocation: true
 
 # Setup
 
-Run the interactive setup flow for the TelemetryDeck CLI bundled with this plugin. Use the Bash tool to execute:
+`tdq login` requires a real TTY for interactive prompts. Claude Code's Bash tool is not a TTY, so attempt the login and handle the two cases:
 
-```bash
-tdq login
+## Case 1 — credentials not yet stored (first run)
+
+Running `tdq login` via Bash will fail with:
+
+```
+stdin is not a TTY — cannot prompt for email.
+Run `tdq login` directly in your terminal.
 ```
 
-The CLI prompts for:
-1. TelemetryDeck email
-2. Password (hidden input)
-3. App selection — it lists the user's apps after the bearer is minted and asks the user to pick one by number (or paste a UUID)
+Tell the user: **open a terminal and run `tdq login`**. Walk them through what to expect:
 
-Secrets go into the OS-native store (Keychain on macOS, libsecret on Linux, file fallback mode 0600 otherwise). Non-secret state (email, registered apps, token expiry) goes in the platform config dir.
+1. TelemetryDeck email prompt
+2. Password prompt (hidden)
+3. Numbered app picker — type the number next to their app and press Enter
+4. A login summary is printed on success
 
-After this runs once, every other `tdq` subcommand refreshes the bearer automatically.
+Once they confirm it completed, run `tdq doctor` via Bash to verify the token is live.
 
-If the user passes a specific UUID as `$ARGUMENTS`, skip the picker:
+## Case 2 — credentials already stored, only app selection needed
+
+If email + password are already in the keychain (e.g. re-setup after switching apps), the non-TTY error will be on the app picker step. The CLI prints the app list before exiting. Read the app names and UUIDs from the error output and ask the user which app to use. Then run:
 
 ```bash
-tdq login --app-id "$ARGUMENTS"
+tdq login --app-id <chosen-uuid>
 ```
 
-When setup finishes, run `tdq doctor` and relay the output so the user sees the end-to-end health check pass.
+`--app-id` skips the picker entirely and works non-interactively.
+
+## Case 3 — `$ARGUMENTS` contains a UUID
+
+Skip the picker immediately:
+
+```bash
+tdq login --app-id $ARGUMENTS
+```
+
+## After any successful login
+
+Run `tdq doctor` and relay the output so the user sees the end-to-end health check pass.

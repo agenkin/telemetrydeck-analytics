@@ -995,10 +995,12 @@ def cmd_login(args: argparse.Namespace) -> None:
                     print(f"Non-interactive: auto-selected only app: {ordered[0]['name']}  ({chosen})")
                 else:
                     uuids = "\n".join(f"  tdq login --app-id {a['id']}   # {a['name']}" for a in ordered)
-                    sys.exit(
+                    print(
                         f"stdin is not a TTY — cannot prompt for app selection.\n"
-                        f"Re-run with --app-id in your terminal:\n{uuids}"
+                        f"Re-run with --app-id in your terminal:\n{uuids}",
+                        file=sys.stderr,
                     )
+                    sys.exit(0)
             else:
                 pick = input("Pick an app (number, or paste a UUID, or blank to skip): ").strip()
                 if pick:
